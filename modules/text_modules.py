@@ -196,6 +196,9 @@ class OpenAIEmbeddings(TextVectorizer):
         super().__init__(data)
     
     def create_embedding_model():
+        """
+        Crea un modelo de embeddings utilizando la API de OpenAI.
+        """
         from langchain.embeddings.openai import OpenAIEmbeddings
         from dotenv import load_dotenv
         import os
@@ -318,3 +321,57 @@ class SimpleQuestionAnswer(StandardQA):
         retriever = vector_store.as_retriever(search_type='similarity', search_kwargs={'k': k})
         chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever, chain_type='stuff')
         return chain.run(query)
+
+# Text consolidator
+
+class TextConsolidator:
+    def find_overlap_words(transcripcion_anterior, transcripcion_actual):
+        """
+        Busca la cantidad de palabras solapadas entre el final de la transcripción anterior y el comienzo de la transcripción actual.
+        :param transcripcion_anterior: Transcripción anterior.
+        :param transcripcion_actual: Transcripción actual.
+        :return: Cantidad de palabras solapadas.
+        """
+        # separa las transcripciones en palabras
+        palabras_anterior = transcripcion_anterior.split()
+        palabras_actual = transcripcion_actual.split()
+
+        common_words = 0
+        i = 1
+
+        # busca la cantidad de palabras solapadas
+        while i <= min(len(palabras_anterior), len(palabras_actual)):
+            if palabras_anterior[-i:] == palabras_actual[:i]:
+                common_words = i
+            i += 1
+
+        return common_words
+    
+    def consolidate_text(self, transcripciones):
+        """
+        Consolida las transcripciones en un archivo de texto sin etiquetas y evita repeticiones de palabras solapadas.
+        :param transcripciones: Lista de transcripciones correspondientes a los segmentos de audio.
+        :param output_path: Ruta del archivo de texto de salida (por defecto, "transcripciones.txt").
+        """
+        consolidated_text = transcripciones[0]  # Inicializamos la transcripción consolidada con la primera transcripción
+        overlap_words = 0  # Inicializamos el contador de palabras solapadas en cero
+
+        for i in range(1, len(transcripciones)):
+            transcripcion_anterior = transcripciones[i - 1]
+            transcripcion_actual = transcripciones[i]
+
+            # Buscamos la cantidad de palabras solapadas utilizando la función
+            overlap_words = self.find_overlap_words(transcripcion_anterior, transcripcion_actual)
+
+            # Agregamos al consolidado la parte no solapada del segmento actual
+            consolidated_text += " " + " ".join(transcripcion_actual.split()[overlap_words:])
+        return consolidated_text
+    
+    def export_consolidated_text(self, consolidated_text, output_path="output/text/transcripciones.txt"):
+        """
+        Exporta el texto consolidado a un archivo de texto.
+        :param consolidated_text: Texto consolidado.
+        :param output_path: Ruta del archivo de texto de salida (por defecto, "output/text/transcripciones.txt").
+        """
+        with open(output_path, "w") as output_file:
+            output_file.write(consolidated_text)

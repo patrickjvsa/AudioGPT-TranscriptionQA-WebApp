@@ -90,6 +90,7 @@ if __name__ == "__main__":
                 st.success('Nuevo archivo cargado.')
                 st.session_state.is_file_charged = True
 
+# RECORDAR AÑADIR EL BORRAR LOS DATOS ANTERIORES AL AÑADIR UN NUEVO ARCHIVO
 
     
     #rol del chatbot
