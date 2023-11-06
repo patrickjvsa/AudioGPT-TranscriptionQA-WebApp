@@ -111,7 +111,6 @@ if __name__ == "__main__":
         mime='text/plain')
 
         st.divider()
-
         # query del usuario
         query = st.text_area('Hacer una pregunta a la IA sobre el audio...', height=160)
 
