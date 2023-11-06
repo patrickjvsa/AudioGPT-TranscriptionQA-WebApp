@@ -47,4 +47,4 @@ Asegúrate de tener Python instalado en tu sistema. Luego, sigue estos pasos:
 
 ## Notas
 
-Me gustaría a futuro añadirle la funcionalidad para descargar y transcribir directamente desde YouTube.
+Me gustaría a futuro añadirle la funcionalidad para descargar y transcribir directamente desde YouTube u otros servidores de hosting.
